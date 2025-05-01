@@ -6,6 +6,5 @@ encrypt.o: encrypt.c encrypt.h
 	gcc -c encrypt.c -std=c99 -Wall -pedantic
 file.o: file.c file.h encrypt.h
 	gcc -c file.c -std=c99 -Wall -pedantic
-
 clear:
 	rm *.o projekti
