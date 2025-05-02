@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
+#include <math.h>
 #include "encrypt.h"
 
 int primality_test(int number) {
@@ -12,16 +14,17 @@ int primality_test(int number) {
 }
 
 int generate_prime() {
+	const int max = (int)sqrt(INT_MAX);
 	int number = 0;
-	while (primality_test(number) == 0) {
-		number = rand();
+	while (!primality_test(number)) {
+		number = rand() % max;
 	}
 	return number;
 }
 
 /* geeks for geeks */
-long int gcd(long int m, long int n) {
-	long int r = 0;
+int gcd(int m, int n) {
+	int r = 0;
 	while (n > 0) {
 		r = m % n;
 		m = n;
@@ -30,44 +33,63 @@ long int gcd(long int m, long int n) {
 	return m;
 }
 
-long int mod_inverse(int e, long int lambda) {
-    for (int d = 2; d < lambda; d++) {
-        if ((e * d) % lambda == 1)
-            return d;
-    }
-    return -1;
+int multiplicative_inverse(int e, int lambda) {
+	for (int d = 2; d < INT_MAX; d++) {
+		if ((d * e) % lambda == 1) {
+			return d; 
+		}
+	}
+	return -1;
 }
 
-void generate_keys() {
-	long int p = 0, q = 0, n = 0, lambda = 0, d = 0;
-	int e = 0;
-	p = generate_prime();
-	q = generate_prime();
-	n = p * q;
-	lambda = labs((p - 1) * (q - 1)) / gcd(p - 1, q - 1);
+void generate_keys(int *n, int *d, int *e) {
+	int p = 0, q = 0, lambda = 0;
 
-	e = 65537;
-	if (!(e < lambda && gcd(e, lambda) == 1)) {
-		printf("Failed to key.\n");
-		exit(1);
-	}
+	do {
+		p = generate_prime();
+		q = generate_prime();
+	} while (p >= INT_MAX / q);
 
-	d = mod_inverse(e, lambda);
+	*n = p * q;
 
-	printf("---------------\n");
-	printf("%ld\n", p);
-	printf("%ld\n", q);
-	printf("%ld\n", n);
-	printf("%ld\n", lambda);
-	printf("%d\n", e);
-	printf("%ld\n", d);
+	lambda = abs((p - 1) * (q - 1)) / gcd(p - 1, q - 1);
 
+	do {
+		*e = generate_prime();
+	} while (!(*e < lambda && gcd(*e, lambda) == 1));
 
+	*d = multiplicative_inverse(*e, lambda);
+
+	printf("------ KEY ------\n");
+	printf("n %d\n", *n);
+	printf("d %d\n", *d);
+	printf("e %d\n", *e);
 
 	return;
 }
 
-char encrypt(char input) {
+/* mä oon fraud tää on kopioitu geeksforgeeksistä */
+int power(int base, int expo, int m) {
+	int res = 1;
+	base = base % m;
+	while (expo > 0) {
+		if (expo & 1)
+			res = (res * 1LL * base) % m;
+		base = (base * 1LL * base) % m;
+		expo = expo / 2;
+	}
+	return res;
+}
+
+int encrypt_rsa(int input, int e, int n) {
+	return power(input, e, n);
+}
+
+int decrypt_rsa(int input, int d, int n) {
+	return power(input, d, n);
+}
+
+char encrypt_xor(char input) {
 	return input ^ XOR_KEY;
 }
 
@@ -88,7 +110,7 @@ void encrypt_file(char *file_path) {
 			perror("Failed to allocate memory, terminating.");
 			exit(1);
 		}
-		file_bytes[byte_amount - 1] = encrypt(byte);
+		file_bytes[byte_amount - 1] = encrypt_xor(byte);
 	}
 
 	fclose(file);
@@ -106,3 +128,4 @@ void encrypt_file(char *file_path) {
 	fclose(file);
 	return;
 }
+
