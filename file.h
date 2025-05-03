@@ -17,6 +17,4 @@ void print_folders(folder_t *first);
 folder_t *delete_first_folder(folder_t *first);
 void free_memory(folder_t *first);
 
-
-
 #endif

