@@ -4,6 +4,7 @@
 #include <math.h>
 #include "encrypt.h"
 
+/* deprecated */
 int primality_test(int number) {
 	for (int i = 2; i * i <= number; i++) {
 		if (number % i == 0) {
@@ -13,6 +14,7 @@ int primality_test(int number) {
 	return number >= 2;
 }
 
+/* deprecated */
 int generate_prime() {
 	const int max = (int)sqrt(INT_MAX);
 	int number = 0;
@@ -22,7 +24,7 @@ int generate_prime() {
 	return number;
 }
 
-/* geeks for geeks */
+/* deprecated */
 int gcd(int m, int n) {
 	int r = 0;
 	while (n > 0) {
@@ -33,6 +35,7 @@ int gcd(int m, int n) {
 	return m;
 }
 
+/* deprecated */
 int multiplicative_inverse(int e, int lambda) {
 	for (int d = 2; d < INT_MAX; d++) {
 		if ((d * e) % lambda == 1) {
@@ -42,6 +45,7 @@ int multiplicative_inverse(int e, int lambda) {
 	return -1;
 }
 
+/* deprecated */
 void generate_keys(int *n, int *d, int *e) {
 	int p = 0, q = 0, lambda = 0;
 
@@ -68,7 +72,9 @@ void generate_keys(int *n, int *d, int *e) {
 	return;
 }
 
-/* mä oon fraud tää on kopioitu geeksforgeeksistä */
+/* this bit of code is copied from geeksforgeeks */
+/* https://www.geeksforgeeks.org/rsa-algorithm-cryptography/ */
+/* deprecated */
 int power(int base, int expo, int m) {
 	int res = 1;
 	base = base % m;
@@ -81,10 +87,12 @@ int power(int base, int expo, int m) {
 	return res;
 }
 
+/* deprecated */
 int encrypt_rsa(int input, int e, int n) {
 	return power(input, e, n);
 }
 
+/* deprecated */
 int decrypt_rsa(int input, int d, int n) {
 	return power(input, d, n);
 }
